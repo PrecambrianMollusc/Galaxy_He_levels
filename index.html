@@ -326,7 +326,33 @@ scene.add(He_mass_group);
           );
           
           scene.add(arrowX, arrowY, arrowZ);
-        
+
+
+    // Load texture of galaxy 
+    const textureLoader = new THREE.TextureLoader();
+    const groundTexture = textureLoader.load('./textures/yourImage.png');
+
+    // Create material with transparency
+    const groundMaterial = new THREE.MeshBasicMaterial({
+      map: groundTexture,
+      transparent: true,
+      opacity: 1.0,
+      side: THREE.DoubleSide
+    });
+    
+      // Plane sized to cover your model footprint
+      const groundGeometry = new THREE.PlaneGeometry(80000, 80000);
+      const groundPlane = new THREE.Mesh(groundGeometry, groundMaterial);
+      
+      // Rotate to lie flat on XZ
+      groundPlane.rotation.x = -Math.PI / 2;
+      
+      // Position below your model
+      groundPlane.position.y = -5000;
+      
+      scene.add(groundPlane);
+
+    
 function updateVisibility() {
   Object.keys(subgroupStates).forEach(groupName => {
     const enabled = !!subgroupStates[groupName];
@@ -595,6 +621,77 @@ everyone who contributes data to the feed`) {
 
 // Usage (call after ui exists, e.g., inside buildUIAndInit)
 const metaControls = addTitleAndCreditsUI();
+
+
+// Opacity slider for ground plane
+const groundOpacityLabel = document.createElement('label');
+groundOpacityLabel.style.display = 'block';
+groundOpacityLabel.style.marginTop = '10px';
+groundOpacityLabel.textContent = 'Ground PNG Opacity';
+
+const groundOpacitySlider = document.createElement('input');
+groundOpacitySlider.type = 'range';
+groundOpacitySlider.min = '0';
+groundOpacitySlider.max = '1';
+groundOpacitySlider.step = '0.01';
+groundOpacitySlider.value = '1.0';
+
+groundOpacitySlider.addEventListener('input', () => {
+  groundPlane.material.opacity = parseFloat(groundOpacitySlider.value);
+});
+
+// Visibility toggle
+const groundToggle = document.createElement('input');
+groundToggle.type = 'checkbox';
+groundToggle.checked = true;
+groundToggle.addEventListener('change', () => {
+  groundPlane.visible = groundToggle.checked;
+});
+
+// Y‑position slider
+const groundYLabel = document.createElement('label');
+groundYLabel.style.display = 'block';
+groundYLabel.textContent = 'Ground Y Position';
+
+const groundYSlider = document.createElement('input');
+groundYSlider.type = 'range';
+groundYSlider.min = '-20000';
+groundYSlider.max = '0';
+groundYSlider.step = '10';
+groundYSlider.value = '-5000';
+
+groundYSlider.addEventListener('input', () => {
+  groundPlane.position.y = parseFloat(groundYSlider.value);
+});
+
+// Scale slider
+const groundScaleLabel = document.createElement('label');
+groundScaleLabel.style.display = 'block';
+groundScaleLabel.textContent = 'Ground Scale';
+
+const groundScaleSlider = document.createElement('input');
+groundScaleSlider.type = 'range';
+groundScaleSlider.min = '100';
+groundScaleSlider.max = '20000';
+groundScaleSlider.step = '100';
+groundScaleSlider.value = '10000';
+
+groundScaleSlider.addEventListener('input', () => {
+  const v = parseFloat(groundScaleSlider.value);
+  groundPlane.scale.set(v, v, 1);
+});
+
+// Add to DOM
+document.body.appendChild(groundOpacityLabel);
+document.body.appendChild(groundOpacitySlider);
+document.body.appendChild(groundToggle);
+document.body.appendChild(groundYLabel);
+document.body.appendChild(groundYSlider);
+document.body.appendChild(groundScaleLabel);
+document.body.appendChild(groundScaleSlider);
+
+
+
 
     
 }); // ← closes loader.load
