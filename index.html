@@ -514,6 +514,38 @@ heOpacitySlider.addEventListener('input', () => {
   setGroupOpacity(He_mass_group, value);
 });
 
+// Label
+const heIntensityLabel = document.createElement('label');
+heIntensityLabel.style.display = 'block';
+heIntensityLabel.style.marginTop = '10px';
+heIntensityLabel.textContent = 'He_mass_group Intensity';
+
+// Slider
+const heIntensitySlider = document.createElement('input');
+heIntensitySlider.type = 'range';
+heIntensitySlider.min = '0.1';   // allow dimming
+heIntensitySlider.max = '3.0';   // allow boosting
+heIntensitySlider.step = '0.1';
+heIntensitySlider.value = '1.0'; // neutral multiplier
+
+// Update all meshes in the group
+heIntensitySlider.addEventListener('input', () => {
+  const factor = parseFloat(heIntensitySlider.value);
+  He_mass_group.traverse(obj => {
+    if (obj.isMesh && obj.material) {
+      // Reset to white, then scale
+      obj.material.color.setScalar(factor);
+      obj.material.needsUpdate = true;
+    }
+  });
+});
+
+// Add to your UI container
+ui.appendChild(heIntensityLabel);
+ui.appendChild(heIntensitySlider);
+
+
+    
 // Opacity slider for ground plane
 const groundOpacityLabel = document.createElement('label');
 groundOpacityLabel.style.display = 'block';
@@ -547,30 +579,15 @@ groundYLabel.textContent = 'Ground Y Position';
 const groundYSlider = document.createElement('input');
 groundYSlider.type = 'range';
 groundYSlider.min = '-20000';
-groundYSlider.max = '0';
-groundYSlider.step = '10';
+groundYSlider.max = '+20000';
+groundYSlider.step = '20';
 groundYSlider.value = '-5000';
 
 groundYSlider.addEventListener('input', () => {
   groundPlane.position.y = parseFloat(groundYSlider.value);
 });
 
-// Scale slider
-const groundScaleLabel = document.createElement('label');
-groundScaleLabel.style.display = 'block';
-groundScaleLabel.textContent = 'Ground Scale';
 
-const groundScaleSlider = document.createElement('input');
-groundScaleSlider.type = 'range';
-groundScaleSlider.min = '100';
-groundScaleSlider.max = '20000';
-groundScaleSlider.step = '100';
-groundScaleSlider.value = '10000';
-
-groundScaleSlider.addEventListener('input', () => {
-  const v = parseFloat(groundScaleSlider.value);
-  groundPlane.scale.set(v, v, 1);
-});
 
 // Add to DOM
 ui.appendChild(groundOpacityLabel);
@@ -578,9 +595,6 @@ ui.appendChild(groundOpacitySlider);
 ui.appendChild(groundToggle);
 ui.appendChild(groundYLabel);
 ui.appendChild(groundYSlider);
-ui.appendChild(groundScaleLabel);
-ui.appendChild(groundScaleSlider);
-
 
 function addTitleAndCreditsUI(initialTitle = 'Kepler Ridge Crystal Quest', initialCredits = `Survey Leader: SigmaExplorer
 CMDRs: 
