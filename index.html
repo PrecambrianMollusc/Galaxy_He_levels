@@ -183,7 +183,9 @@ loader.setDRACOLoader(dracoLoader);
         case 'mesh6': He_mass_code_6.push(child); break;
         case 'mesh7': He_mass_code_7.push(child); break;
         case 'mesh8': guardian_ruins.push(child); break;
-        case 'mesh9': sphereMesh = child; break;
+        case 'mesh9': guardian_structures.push(child); break;
+        case 'mesh10': guardian_beacons.push(child); break;  
+        case 'mesh11': sphereMesh = child; break;
       }
 
       console.log(`Mesh ${meshList.length - 1}:`, child.name || '(unnamed)');
@@ -228,6 +230,11 @@ scene.add(He_mass_group);
       // add more groups here if needed
     };
     
+    // set up the sphere for the Hen nebula 
+    sphereMesh.material.opacity = 0.3;
+    sphereMesh.material.transparent = true;
+    sphereMesh.material.depthWrite = false;
+    sphereMesh.material.needsUpdate = true;
 
     // point cloud for all beforesystems - should be a low opacity blur
     //before_allSystems.material.size = 2.0; // make points larger
