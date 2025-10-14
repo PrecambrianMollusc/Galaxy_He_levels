@@ -12,11 +12,14 @@
 <body>
 <script type="module">
   //Import modules
-  import * as THREE from 'https://unpkg.com/three@0.154.0/build/three.module.js';
-  import { GLTFLoader } from './GLTFLoader.js';
-  import { OrbitControls } from './OrbitControls.js';
-  import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
-
+  //import * as THREE from 'https://unpkg.com/three@0.154.0/build/three.module.js';
+  //import { GLTFLoader } from './GLTFLoader.js';
+  //import { OrbitControls } from './OrbitControls.js';
+  //import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
+  import * as THREE from './js/three.module.js';
+  import { GLTFLoader } from './js/GLTFLoader.js';
+  import { DRACOLoader } from './js/DRACOLoader.js';
+  import { OrbitControls } from './js/OrbitControls.js';
 
   const loader = new GLTFLoader();
 
