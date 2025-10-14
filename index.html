@@ -33,7 +33,7 @@ loader.setDRACOLoader(dracoLoader);
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x111111);
  
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 80000);
   // Lighting section — right after camera
   const ambient = new THREE.AmbientLight(0xffffff, 0.4);
   scene.add(ambient);
@@ -282,7 +282,7 @@ scene.add(He_mass_group);
           console.log('Bounding box size:', size);
           console.log('Bounding box center:', center);
       
-          camera.position.set(center.x, center.y, center.z + size.length());
+          camera.position.set(center.x, center.y+ size.length(), center.z );
           controls.target.copy(center);
           controls.update();
   
