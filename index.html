@@ -282,7 +282,7 @@ scene.add(He_mass_group);
           console.log('Bounding box size:', size);
           console.log('Bounding box center:', center);
       
-          camera.position.set(center.x, center.y+ size.length()/4, center.z );
+          camera.position.set(center.x-2000, center.y+ size.length()/2, center.z );
           controls.target.copy(center);
           controls.update();
   
