@@ -326,31 +326,34 @@ scene.add(He_mass_group);
           );
           
           scene.add(arrowX, arrowY, arrowZ);
-
-
-    // Load texture of galaxy 
-    const textureLoader = new THREE.TextureLoader();
-    const groundTexture = textureLoader.load('./textures/yourImage.png');
-
-    // Create material with transparency
-    const groundMaterial = new THREE.MeshBasicMaterial({
-      map: groundTexture,
-      transparent: true,
-      opacity: 1.0,
-      side: THREE.DoubleSide
-    });
-    
-      // Plane sized to cover your model footprint
-      const groundGeometry = new THREE.PlaneGeometry(80000, 80000);
-      const groundPlane = new THREE.Mesh(groundGeometry, groundMaterial);
-      
-      // Rotate to lie flat on XZ
-      groundPlane.rotation.x = -Math.PI / 2;
-      
-      // Position below your model
-      groundPlane.position.y = -5000;
-      
-      scene.add(groundPlane);
+          
+          const width = 90000;   // X span
+          const height = 90000;  // Z span
+          
+          const groundGeometry = new THREE.PlaneGeometry(width, height, 1, 1);
+          
+          // Load texture
+          const textureLoader = new THREE.TextureLoader();
+          const groundTexture = textureLoader.load('.gamegalaxy-4500px.png');
+          
+          // Material
+          const groundMaterial = new THREE.MeshBasicMaterial({
+            map: groundTexture,
+            transparent: true,
+            opacity: 1.0,
+            side: THREE.DoubleSide
+          });
+          
+          // Mesh
+          const groundPlane = new THREE.Mesh(groundGeometry, groundMaterial);
+          
+          // Rotate flat on XZ
+          groundPlane.rotation.x = -Math.PI / 2;
+          
+          // Position at the rectangle’s center
+          groundPlane.position.set(0, -5000, 25000);
+          
+          scene.add(groundPlane);    
 
     
 function updateVisibility() {
