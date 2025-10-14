@@ -32,16 +32,30 @@ loader.setDRACOLoader(dracoLoader);
   // renderer , camera, scene, controls
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x111111);
- 
+
+  const aspect = window.innerWidth / window.innerHeight;
+  const frustumSize = 100000; // adjust to cover your scene extents
+
+  const camera = new THREE.OrthographicCamera(
+  -frustumSize * aspect / 2,  // left
+   frustumSize * aspect / 2,  // right
+   frustumSize / 2,           // top
+  -frustumSize / 2,           // bottom
+   1,                         // near
+   200000                     // far
+);
+
+
+  
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 120000);
   // Lighting section — right after camera
-  const ambient = new THREE.AmbientLight(0xffffff, 0.4);
+  const ambient = new THREE.AmbientLight(0xffffff, 0.8);
   scene.add(ambient);
   
-  const hemi = new THREE.HemisphereLight(0x88ccff, 0x222244, 0.6);
+  const hemi = new THREE.HemisphereLight(0x88ccff, 0x222244, 0.8);
   scene.add(hemi);
    
-  const directional = new THREE.DirectionalLight(0xffffff, 0.2);
+  const directional = new THREE.DirectionalLight(0xffffff, 0.7);
   directional.position.set(1, 1, 1);
   scene.add(directional);
     
