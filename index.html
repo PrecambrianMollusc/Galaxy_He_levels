@@ -282,7 +282,7 @@ scene.add(He_mass_group);
           console.log('Bounding box size:', size);
           console.log('Bounding box center:', center);
       
-          camera.position.set(center.x, center.y+ size.length(), center.z );
+          camera.position.set(center.x, center.y+ size.length()/4, center.z );
           controls.target.copy(center);
           controls.update();
   
@@ -292,9 +292,9 @@ scene.add(He_mass_group);
           const max = box.max;
           const offset = size.length() * 0.1;
 
-          const labelX = createAxisLabelMesh('Galactic X', new THREE.Vector3(min.x + offset, min.y, min.z), new THREE.Euler(0, 0, 0));
+          const labelX = createAxisLabelMesh('Galactic Z', new THREE.Vector3(min.x + offset, min.y, min.z), new THREE.Euler(0, 0, 0));
           const labelY = createAxisLabelMesh('Galactic Y', new THREE.Vector3(min.x, min.y + offset, min.z), new THREE.Euler(0, 0, Math.PI / 2));
-          const labelZ = createAxisLabelMesh('Galactic Z', new THREE.Vector3(min.x, min.y, min.z + offset), new THREE.Euler( 0,  - Math.PI / 2, 0));        
+          const labelZ = createAxisLabelMesh('Galactic X', new THREE.Vector3(min.x, min.y, min.z + offset), new THREE.Euler( 0,  - Math.PI / 2, 0));        
               
           const labelScale = size.length() * 0.002; // 20% of diagonal length
           labelX.scale.set(labelScale, labelScale * 0.5, 1);
@@ -303,7 +303,7 @@ scene.add(He_mass_group);
     
           scene.add(labelX, labelY, labelZ);
           
-          const arrowLength = size.length() * 0.2;
+          const arrowLength = size.length() * 0.05;
           const arrowX = new THREE.ArrowHelper(
             new THREE.Vector3(1, 0, 0), // direction: +X
             box.min,                    // origin: bounding box corner
