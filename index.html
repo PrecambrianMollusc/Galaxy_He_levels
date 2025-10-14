@@ -573,13 +573,14 @@ groundScaleSlider.addEventListener('input', () => {
 });
 
 // Add to DOM
-document.body.appendChild(groundOpacityLabel);
-document.body.appendChild(groundOpacitySlider);
-document.body.appendChild(groundToggle);
-document.body.appendChild(groundYLabel);
-document.body.appendChild(groundYSlider);
-document.body.appendChild(groundScaleLabel);
-document.body.appendChild(groundScaleSlider);    
+ui.appendChild(groundOpacityLabel);
+ui.appendChild(groundOpacitySlider);
+ui.appendChild(groundToggle);
+ui.appendChild(groundYLabel);
+ui.appendChild(groundYSlider);
+ui.appendChild(groundScaleLabel);
+ui.appendChild(groundScaleSlider);
+
 
 function addTitleAndCreditsUI(initialTitle = 'Kepler Ridge Crystal Quest', initialCredits = `Survey Leader: SigmaExplorer
 CMDRs: 
