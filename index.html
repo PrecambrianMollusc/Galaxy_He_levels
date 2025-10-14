@@ -126,20 +126,33 @@
   
   // load the gtlf file 
   const loader = new GLTFLoader();
-  loader.load('https://precambrianmollusc.github.io/IGAU_KeplerRidge_CrystalSurvey/visualization.gltf', gltf => {
+  loader.load('galaxy_optimised.glb', (gltf) => {
     const model = gltf.scene;
     scene.add(model);
     console.log('GLTF loaded:', model);
 
-  // 🔍 Traverse and log to identoify all scene objects and get rid of any i doint want - I should clean up in the gtlf export!
-  scene.traverse(obj => {
-    console.log(`Object: ${obj.type}, name: ${obj.name || '(unnamed)'}, visible: ${obj.visible}`);
-     if (obj.name === 'mesh14' && obj.type === 'LineSegments') {
-      obj.visible = false; // or scene.remove(obj);
-      console.log('🔧 Hiding PyVista bounding box mesh14');
-    }
+  model.traverse(obj => {
+    if (obj.isMesh || obj.isLine || obj.isPoints) {
+      const mat = obj.material;
+      const geom = obj.geometry;
 
+      console.log(`Object: ${obj.name || '(unnamed)'}`, {
+        type: obj.type,
+        materialType: mat?.type,
+        color: mat?.color ? mat.color.getHexString() : 'n/a',
+        transparent: mat?.transparent,
+        opacity: mat?.opacity,
+        vertexColors: mat?.vertexColors,
+        geometryAttributes: Object.keys(geom.attributes),
+      });
+
+      // If vertex colors exist, log their itemSize (3=RGB, 4=RGBA)
+      if (geom.attributes.color) {
+        console.log(`  ↳ vertex color itemSize: ${geom.attributes.color.itemSize}`);
+      }
+    }
   });
+
     
 // Traverse the child looking for mesh and points so we can put into groups - at some point need to figure naming in the python export       
     model.traverse(child => {
