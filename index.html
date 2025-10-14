@@ -126,16 +126,17 @@ loader.setDRACOLoader(dracoLoader);
   let sphereMesh = []; // 👈 this will hold meshList[13] once loaded
   let before_allSystems = [];
   let after_allSystems = [];
-  let before_criteria = [];
-  let after_criteria = [];
-  let before_silicateCrystal = [];
-  let before_iceCrystal = [];
-  let before_podsystems = [];
-  let before_podtreesystems = [];
-  let after_silicateCrystal = [];
-  let after_iceCrystal = [];
-  let after_podsystems = [];
-  let after_podtreesystems = [];
+  let  He_mass_code_0 = [];
+  let  He_mass_code_1 = [];
+  let  He_mass_code_2 = [];
+  let  He_mass_code_3 = [];
+  let  He_mass_code_4 = [];
+  let  He_mass_code_5 = [];
+  let  He_mass_code_6 = [];
+  let  He_mass_code_7 = [];
+  let guardian_ruins = [];
+  let guardian_structures = [];
+  let guardian_beacons = [];
   
   // load the gtlf file 
   // const loader = new GLTFLoader();
@@ -167,199 +168,105 @@ loader.setDRACOLoader(dracoLoader);
   });
 
     
-// Traverse the child looking for mesh and points so we can put into groups - at some point need to figure naming in the python export       
-    model.traverse(child => {
-       if (child.isMesh || child.type === 'Points') {
-        meshList.push(child);
-        if (child.name === 'mesh0') before_allSystems = child;
-        if (child.name === 'mesh1') after_allSystems = child;
-        if (child.name === 'mesh2') before_criteria = child;
-        if (child.name === 'mesh3') after_criteria = child;
-        if (child.name === 'mesh4' ) {before_podtreesystems.push(child);}
-        if (child.name === 'mesh5' ) {before_podsystems.push(child);}
-        if (child.name === 'mesh6' ) {after_podtreesystems.push(child);}
-        if (child.name === 'mesh7' ) {after_podsystems.push(child);}
-        if (child.name === 'mesh9' || child.name === 'mesh11' || child.name === 'mesh13'|| child.name === 'mesh14') {before_iceCrystal.push(child);}
-        if (child.name === 'mesh8' || child.name === 'mesh10'|| child.name === 'mesh12'|| child.name === 'mesh15' ) {before_silicateCrystal.push(child);}
-        if (child.name === 'mesh16' || child.name === 'mesh18' || child.name === 'mesh20'|| child.name === 'mesh22'|| child.name === 'mesh23'|| child.name === 'mesh23') {after_iceCrystal.push(child);}
-        if (child.name === 'mesh17' || child.name === 'mesh19'|| child.name === 'mesh21'|| child.name === 'mesh24' ) {after_silicateCrystal.push(child);}
-        if (child.name === 'mesh25') sphereMesh= child;
-        
-        console.log(`Mesh ${meshList.length - 1}:`, child.name || '(unnamed)', child);
+    // 3. Grouping/naming
+  model.traverse(child => {
+    if (child.isMesh || child.type === 'Points') {
+      meshList.push(child);
+
+      switch (child.name) {
+        case 'mesh0': He_mass_code_0.push(child); break;
+        case 'mesh1': He_mass_code_1.push(child); break;
+        case 'mesh2': He_mass_code_2.push(child); break;
+        case 'mesh3': He_mass_code_3.push(child); break;
+        case 'mesh4': He_mass_code_4.push(child); break;
+        case 'mesh5': He_mass_code_5.push(child); break;
+        case 'mesh6': He_mass_code_6.push(child); break;
+        case 'mesh7': He_mass_code_7.push(child); break;
+        case 'mesh8': guardian_ruins.push(child); break;
+        case 'mesh9': sphereMesh = child; break;
       }
-    });
-    
-    console.log('Total meshes found:', meshList.length);
+
+      console.log(`Mesh ${meshList.length - 1}:`, child.name || '(unnamed)');
+    }
+  });
+
+// Create a parent group for all He_mass_code_x meshes
+const He_mass_group = new THREE.Group();
+He_mass_group.name = "He_mass_group";
+
+// Add all the He_mass_code_x arrays into the group
+[
+  He_mass_code_0,
+  He_mass_code_1,
+  He_mass_code_2,
+  He_mass_code_3,
+  He_mass_code_4,
+  He_mass_code_5,
+  He_mass_code_6,
+  He_mass_code_7
+].forEach(arr => {
+  arr.forEach(mesh => He_mass_group.add(mesh));
+});
+
+// Add the group to the scene
+scene.add(He_mass_group);
 
     // set up the meshes in groups 
     // BEFORE meshes
     const beforeMeshes = {
-      AllSystems: [before_allSystems],
-      Criteria: [before_criteria],
-      IceCrystal: before_iceCrystal,
-      SilicateCrystal: before_silicateCrystal,
-      PodTrees: before_podtreesystems,
-      PodSystems: before_podsystems
+      AllSystems: [before_allSystems]
       };
     
     // AFTER meshes
     const afterMeshes = {
-      AllSystems: [after_allSystems],
-      Criteria: [after_criteria],
-      IceCrystal: after_iceCrystal,
-      SilicateCrystal: after_silicateCrystal,
-      PodTrees: after_podtreesystems,
-      PodSystems: after_podsystems
+      AllSystems: [after_allSystems]
       };
 
+    // somewhere after you create groups
+    const groupObjects = {
+      HeMassGroup: He_mass_group,
+      // add more groups here if needed
+    };
+    
 
     // point cloud for all beforesystems - should be a low opacity blur
-    before_allSystems.material.size = 2.0; // make points larger
-    before_allSystems.material.opacity = 0.3;
-    before_allSystems.material.transparent = true;
-    before_allSystems.material.needsUpdate = true;
+    //before_allSystems.material.size = 2.0; // make points larger
+    //before_allSystems.material.opacity = 0.3;
+    //before_allSystems.material.transparent = true;
+    //before_allSystems.material.needsUpdate = true;
 
     // point cloud for all after systems - should be a low opacity blur
-    after_allSystems.material.size = 2.0; // make points larger
-    after_allSystems.material.opacity = 0.3;
-    after_allSystems.material.transparent = true;
-    after_allSystems.material.needsUpdate = true;
+    //after_allSystems.material.size = 2.0; // make points larger
+    //after_allSystems.material.opacity = 0.3;
+    //after_allSystems.material.transparent = true;
+    //after_allSystems.material.needsUpdate = true;
   
     // point cloud for the systems that meet criteria but no SPS  we will make this look like spheres
     const sprite_sphere = new THREE.TextureLoader().load('https://threejs.org/examples/textures/sprites/disc.png');
     sprite_sphere.colorSpace = THREE.SRGBColorSpace; // ensures correct color rendering
     console.log('Sprite loaded:', sprite_sphere);
 
-    before_criteria.material.map = sprite_sphere;
-    before_criteria.material.size = 10;
-    before_criteria.material.opacity = 0.7;
-    before_criteria.material.transparent = true;
-    before_criteria.material.depthWrite = false; // prevents z-fighting
-    before_criteria.material.needsUpdate = true;
-    before_criteria.material.blending = THREE.AdditiveBlending;
+    //before_criteria.material.map = sprite_sphere;
+    //before_criteria.material.size = 10;
+    //before_criteria.material.opacity = 0.7;
+    //before_criteria.material.transparent = true;
+    //before_criteria.material.depthWrite = false; // prevents z-fighting
+    //before_criteria.material.needsUpdate = true;
+    //before_criteria.material.blending = THREE.AdditiveBlending;
     
-    after_criteria.material.map = sprite_sphere;
-    after_criteria.material.size = 10;
-    after_criteria.material.opacity = 0.7;
-    after_criteria.material.transparent = true;
-    after_criteria.material.depthWrite = false; // prevents z-fighting
-    after_criteria.material.needsUpdate = true;
-    after_criteria.material.blending = THREE.AdditiveBlending;
+    //after_criteria.material.map = sprite_sphere;
+    //after_criteria.material.size = 10;
+    //after_criteria.material.opacity = 0.7;
+    //after_criteria.material.transparent = true;
+    //after_criteria.material.depthWrite = false; // prevents z-fighting
+    //after_criteria.material.needsUpdate = true;
+    //after_criteria.material.blending = THREE.AdditiveBlending;
 
     // set up the sphere for the raduis of NSPs from the center 
-    sphereMesh.material.opacity = 0.3;
-    sphereMesh.material.transparent = true;
-    sphereMesh.material.depthWrite = false;
-    sphereMesh.material.needsUpdate = true;
-
-    // set up the renderings for the differenet NSPs 
-       before_silicateCrystal.forEach(mesh => {
-          const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-          materials.forEach(mat => {
-            mat.color = new THREE.Color(0xdddddd);           // slate gray base
-            mat.emissive = new THREE.Color(0x070707);        // subtle inner depth
-            mat.emissiveIntensity = 0.05;
-            mat.metalness = 0.95;                             // high metal content
-            mat.roughness = 0.12;                             // polished but not mirror-like
-            mat.transparent = false;
-            mat.opacity = 1.0;
-            mat.depthWrite = true;
-            mat.needsUpdate = true;
-          });
-        });
-    // set up the renderings for the differenet NSPs 
-       after_silicateCrystal.forEach(mesh => {
-          const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-          materials.forEach(mat => {
-            mat.color = new THREE.Color(0x555555);           // slate gray base
-            mat.emissive = new THREE.Color(0x111111);        // subtle inner depth
-            mat.emissiveIntensity = 0.2;
-            mat.metalness = 0.8;                             // high metal content
-            mat.roughness = 0.3;                             // polished but not mirror-like
-            mat.transparent = false;
-            mat.opacity = 1.0;
-            mat.depthWrite = true;
-            mat.needsUpdate = true;
-          });
-        });
- 
-      before_iceCrystal.forEach(mesh => {
-          const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-          materials.forEach(mat => {
-            mat.emissive = new THREE.Color(0xeeeeff);       // spectral white
-            mat.emissiveIntensity = 0.68;                    // brighter than silicates
-            mat.transparent = true;
-            mat.opacity = 0.5;                              // soft translucency
-            mat.depthWrite = false;
-            mat.needsUpdate = true;
-          });
-        });
-      
-      after_iceCrystal.forEach(mesh => {
-          const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-          materials.forEach(mat => {
-            mat.emissive = new THREE.Color(0xeeeeff);       // spectral white
-            mat.emissiveIntensity = 0.68;                    // brighter than silicates
-            mat.transparent = true;
-            mat.opacity = 0.5;                              // soft translucency
-            mat.depthWrite = false;
-            mat.needsUpdate = true;
-          });
-        });
- 
-      before_podtreesystems.forEach(mesh => {
-          const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-          materials.forEach(mat => {
-            mat.emissive = new THREE.Color(0x00ff66);       // spectral green
-            mat.emissiveIntensity = 0.5;
-            mat.transparent = true;
-            mat.opacity = 0.4;
-            mat.depthWrite = false;
-            mat.needsUpdate = true;
-          });
-        });
-    
-      before_podsystems.forEach(mesh => {
-        const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-        materials.forEach(mat => {
-          mat.color = new THREE.Color(0xb87333);          // copper base
-          mat.emissive = new THREE.Color(0x552200);       // warm inner glow
-          mat.emissiveIntensity = 0.3;
-          mat.metalness = 0.6;                            // simulate metal surface
-          mat.roughness = 0.4;                            // slight polish
-          mat.transparent = true;
-          mat.opacity = 0.9;
-          mat.depthWrite = true;
-          mat.needsUpdate = true;
-        });
-      });
-    
-      after_podtreesystems.forEach(mesh => {
-          const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-          materials.forEach(mat => {
-            mat.emissive = new THREE.Color(0x00ff66);       // spectral green
-            mat.emissiveIntensity = 0.5;
-            mat.transparent = true;
-            mat.opacity = 0.4;
-            mat.depthWrite = false;
-            mat.needsUpdate = true;
-          });
-        });
-    
-      after_podsystems.forEach(mesh => {
-        const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-        materials.forEach(mat => {
-          mat.color = new THREE.Color(0xb87333);          // copper base
-          mat.emissive = new THREE.Color(0x552200);       // warm inner glow
-          mat.emissiveIntensity = 0.3;
-          mat.metalness = 0.6;                            // simulate metal surface
-          mat.roughness = 0.4;                            // slight polish
-          mat.transparent = true;
-          mat.opacity = 0.9;
-          mat.depthWrite = true;
-          mat.needsUpdate = true;
-        });
-      });
+    //sphereMesh.material.opacity = 0.3;
+    //sphereMesh.material.transparent = true;
+    //sphereMesh.material.depthWrite = false;
+    //sphereMesh.material.needsUpdate = true;
    
   // add the bounding box 
           const box = new THREE.Box3().setFromObject(model);
@@ -413,14 +320,23 @@ loader.setDRACOLoader(dracoLoader);
           
           scene.add(arrowX, arrowY, arrowZ);
         
-    // single visibility updater (uses beforeMeshes and afterMeshes)
-  function updateVisibility() {
-    Object.keys(subgroupStates).forEach(groupName => {
-      const enabled = !!subgroupStates[groupName];
-      (beforeMeshes[groupName] || []).forEach(m => { if (m) m.visible = (activeState === 'before' && enabled); });
-      (afterMeshes[groupName]  || []).forEach(m => { if (m) m.visible = (activeState === 'after'  && enabled); });
+function updateVisibility() {
+  Object.keys(subgroupStates).forEach(groupName => {
+    const enabled = !!subgroupStates[groupName];
+    (beforeMeshes[groupName] || []).forEach(m => { 
+      if (m) m.visible = (activeState === 'before' && enabled); 
     });
-  }
+    (afterMeshes[groupName]  || []).forEach(m => { 
+      if (m) m.visible = (activeState === 'after'  && enabled); 
+    });
+
+    // 🔧 If we have a real Three.js group, toggle it
+    if (groupObjects[groupName]) {
+      groupObjects[groupName].visible = enabled;
+    }
+  });
+}
+
 
   // reusable toggle builder. If isMaster is true, checkbox flips before/after; otherwise it's a subgroup toggle.
   function addGroupToggle(groupArray, labelText, isMaster = false, groupKey = null) {
@@ -453,20 +369,15 @@ loader.setDRACOLoader(dracoLoader);
     label.appendChild(document.createTextNode(labelText));
     ui.appendChild(label);
   }
-        
     
-    // master toggle (looks same as other checkboxes)
-        addGroupToggle(null, 'Show Before State', true);
+        // master toggle (looks same as other checkboxes)
+        //addGroupToggle(null, 'Show Before State', true);
         
         // subgroup toggles that control both before/after groups
 
-        addGroupToggle(beforeMeshes.AllSystems.concat(afterMeshes.AllSystems), 'All Systems', false, 'AllSystems');
-        addGroupToggle(beforeMeshes.Criteria.concat(afterMeshes.Criteria), 'Criteria', false, 'Criteria');
-        addGroupToggle(beforeMeshes.IceCrystal.concat(afterMeshes.IceCrystal), 'Ice Crystals', false, 'IceCrystal');
-        addGroupToggle(beforeMeshes.SilicateCrystal.concat(afterMeshes.SilicateCrystal), 'Silicate Crystals', false, 'SilicateCrystal');
-        addGroupToggle(beforeMeshes.PodTrees.concat(afterMeshes.PodTrees), 'Pod Trees', false, 'PodTrees');
-        addGroupToggle(beforeMeshes.PodSystems.concat(afterMeshes.PodSystems), 'Pod Systems', false, 'PodSystems');
-        
+        //addGroupToggle(beforeMeshes.PodSystems.concat(afterMeshes.PodSystems), 'Pod Systems', false, 'PodSystems');
+        addGroupToggle(He_mass_group, 'He Mass Group');
+
         // initialize visibility once
         updateVisibility();
         
@@ -524,6 +435,49 @@ loader.setDRACOLoader(dracoLoader);
   
     ui.appendChild(opacityLabel);
     ui.appendChild(opacitySlider);
+
+    
+// Opacity slider for He_mass_group
+const heOpacityLabel = document.createElement('label');
+heOpacityLabel.style.display = 'block';
+heOpacityLabel.style.marginTop = '10px';
+heOpacityLabel.textContent = 'He_mass_group Opacity';
+
+const heOpacitySlider = document.createElement('input');
+heOpacitySlider.type = 'range';
+heOpacitySlider.min = '0';
+heOpacitySlider.max = '1';
+heOpacitySlider.step = '0.01';
+heOpacitySlider.value = '0.2'; // start fully opaque
+
+ui.appendChild(heOpacityLabel);
+ui.appendChild(heOpacitySlider);
+
+// Helper to apply opacity to the group
+function setGroupOpacity(group, value) {
+  group.traverse(obj => {
+    if (obj.isMesh && obj.material) {
+      const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+      mats.forEach(mat => {
+        mat.transparent = true;
+        mat.opacity = value;
+        mat.depthWrite = false; // avoids z‑fighting with transparency
+        mat.needsUpdate = true;
+      });
+    }
+  });
+}
+
+// Apply initial opacity
+setGroupOpacity(He_mass_group, parseFloat(heOpacitySlider.value));
+   
+
+// Update on slider input
+heOpacitySlider.addEventListener('input', () => {
+  const value = parseFloat(heOpacitySlider.value);
+  setGroupOpacity(He_mass_group, value);
+});
+
 
 function addTitleAndCreditsUI(initialTitle = 'Kepler Ridge Crystal Quest', initialCredits = `Survey Leader: SigmaExplorer
 CMDRs: 
