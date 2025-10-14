@@ -15,7 +15,17 @@
   import * as THREE from 'https://unpkg.com/three@0.154.0/build/three.module.js';
   import { GLTFLoader } from './GLTFLoader.js';
   import { OrbitControls } from './OrbitControls.js';
-  
+  import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
+
+
+  const loader = new GLTFLoader();
+
+  const dracoLoader = new DRACOLoader();
+  // Point this to the Draco decoder files (downloaded from three.js repo)
+  dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/'); 
+  // or a local path like './draco/' if you host the decoder files yourself
+
+loader.setDRACOLoader(dracoLoader);
   // renderer , camera, scene, controls
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x111111);
