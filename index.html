@@ -241,14 +241,22 @@ He_mass_group.name = "He_mass_group";
   arr.forEach(mesh => He_mass_group.add(mesh));
 });
 
-    // Cache original colors once
-    He_mass_group.traverse(obj => {
-      if (obj.isMesh && obj.geometry && obj.geometry.attributes.color) {
-        const colors = obj.geometry.attributes.color;
-        // Store a Float32Array copy on the geometry
-        obj.userData.originalColors = new Float32Array(colors.array);
-      }
-    });
+He_mass_group.traverse(obj => {
+  if (obj.isMesh && obj.geometry && obj.geometry.attributes.color) {
+    const colors = obj.geometry.attributes.color;
+    const orig = new Float32Array(colors.count * 3);
+
+    for (let i = 0; i < colors.count; i++) {
+      orig[i*3]   = colors.getX(i) / 255;
+      orig[i*3+1] = colors.getY(i) / 255;
+      orig[i*3+2] = colors.getZ(i) / 255;
+    }
+
+    obj.userData.originalColors = orig;
+  }
+});
+
+
 
 He_mass_group.traverse(obj => {
   if (obj.isMesh && obj.geometry && obj.geometry.attributes.color) {
