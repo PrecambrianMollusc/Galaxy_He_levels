@@ -181,22 +181,23 @@ loader.setDRACOLoader(dracoLoader);
     }
   });
 
-    // fix red for the high He meshes 
     console.log('Total meshes found:', meshList.length);
-    model.traverse(obj => {
-      if (obj.isMesh && obj.material && obj.material.color) {
-        const c = obj.material.color;
-        // crude "is red" check: R much higher than G/B
-        if (c.r > 0.6 && c.g < 0.3 && c.b < 0.3) {
-          obj.material.emissive = c.clone(); // match base color
-          obj.material.emissiveIntensity = 0.6; // default, will be slider‑controlled
-          obj.material.needsUpdate = true;
-          console.log(`🔧 Applied emissive to ${obj.name}`);
-        }
-      }
-    });
-
+    // fix red for the high He meshes 
     
+    //model.traverse(obj => {
+    //  if (obj.isMesh && obj.material && obj.material.color) {
+    //    const c = obj.material.color;
+    //    // crude "is red" check: R much higher than G/B
+    //    if (c.r > 0.6 && c.g < 0.3 && c.b < 0.3) {
+    //      obj.material.emissive = c.clone(); // match base color
+    //      obj.material.emissiveIntensity = 0.6; // default, will be slider‑controlled
+     //     obj.material.needsUpdate = true;
+    //      console.log(`🔧 Applied emissive to ${obj.name}`);
+    //    }
+    //  }
+   // });
+
+
     
     // 3. Grouping/naming
   model.traverse(child => {
@@ -242,6 +243,8 @@ He_mass_group.name = "He_mass_group";
 
 // Add the group to the scene
 scene.add(He_mass_group);
+    
+
 
     // set up the meshes in groups 
     // BEFORE meshes
@@ -259,6 +262,15 @@ scene.add(He_mass_group);
       HeMassGroup: He_mass_group,
       // add more groups here if needed
     };
+    
+    // Cache original colors once
+    He_mass_group.traverse(obj => {
+      if (obj.isMesh && obj.geometry && obj.geometry.attributes.color) {
+        const colors = obj.geometry.attributes.color;
+        // Store a Float32Array copy on the geometry
+        obj.userData.originalColors = new Float32Array(colors.array);
+      }
+    });
     
     // set up the sphere for the Hen nebula 
     sphereMesh.material.opacity = 0.3;
@@ -445,7 +457,7 @@ function updateVisibility() {
         // subgroup toggles that control both before/after groups
 
         //addGroupToggle(beforeMeshes.PodSystems.concat(afterMeshes.PodSystems), 'Pod Systems', false, 'PodSystems');
-        addGroupToggle(He_mass_group, 'Helium % Show');
+       // addGroupToggle(He_mass_group, 'Helium % Show');
 
         // initialize visibility once
         updateVisibility();
@@ -502,8 +514,8 @@ function updateVisibility() {
       }
     });
   
-    ui.appendChild(opacityLabel);
-    ui.appendChild(opacitySlider);
+    //ui.appendChild(opacityLabel);
+    //ui.appendChild(opacitySlider);
 
     
 // Opacity slider for He_mass_group
@@ -551,7 +563,7 @@ heOpacitySlider.addEventListener('input', () => {
 const heIntensityLabel = document.createElement('label');
 heIntensityLabel.style.display = 'block';
 heIntensityLabel.style.marginTop = '10px';
-heIntensityLabel.textContent = 'Helium % Intensity';
+heIntensityLabel.textContent = 'Helium % Intensity Saturation';
 
 // Slider
 const heIntensitySlider = document.createElement('input');
@@ -564,15 +576,16 @@ heIntensitySlider.value = '1.0'; // neutral
 // Update all vertex colors in the group
 heIntensitySlider.addEventListener('input', () => {
   const factor = parseFloat(heIntensitySlider.value);
+  const color = new THREE.Color();
 
   He_mass_group.traverse(obj => {
-    if (obj.isMesh && obj.geometry && obj.geometry.attributes.color) {
+    if (obj.isMesh && obj.geometry && obj.geometry.attributes.color && obj.userData.originalColors) {
       const colors = obj.geometry.attributes.color;
-      const color = new THREE.Color();
+      const orig = obj.userData.originalColors;
 
       for (let i = 0; i < colors.count; i++) {
-        // Read original vertex color
-        color.fromBufferAttribute(colors, i);
+        // Read original color
+        color.setRGB(orig[i*3], orig[i*3+1], orig[i*3+2]);
 
         // Convert to HSL
         const hsl = {};
@@ -581,7 +594,7 @@ heIntensitySlider.addEventListener('input', () => {
         // Scale saturation
         hsl.s = Math.min(1, hsl.s * factor);
 
-        // Write back adjusted color
+        // Write back
         color.setHSL(hsl.h, hsl.s, hsl.l);
         colors.setXYZ(i, color.r, color.g, color.b);
       }
@@ -590,6 +603,7 @@ heIntensitySlider.addEventListener('input', () => {
     }
   });
 });
+
 
 // Add to UI
 ui.appendChild(heIntensityLabel);
