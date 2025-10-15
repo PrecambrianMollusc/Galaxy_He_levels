@@ -426,7 +426,7 @@ function updateVisibility() {
         // subgroup toggles that control both before/after groups
 
         //addGroupToggle(beforeMeshes.PodSystems.concat(afterMeshes.PodSystems), 'Pod Systems', false, 'PodSystems');
-        addGroupToggle(He_mass_group, 'He Mass Group');
+        addGroupToggle(He_mass_group, 'Helium % Show');
 
         // initialize visibility once
         updateVisibility();
@@ -457,7 +457,7 @@ function updateVisibility() {
     const opacityLabel = document.createElement('label');
     opacityLabel.style.display = 'block';
     opacityLabel.style.marginTop = '10px';
-    opacityLabel.textContent = 'Sphere Opacity';
+    opacityLabel.textContent = 'Hen Nebula Opacity';
     
     const opacitySlider = document.createElement('input');
     opacitySlider.type = 'range';
@@ -491,7 +491,7 @@ function updateVisibility() {
 const heOpacityLabel = document.createElement('label');
 heOpacityLabel.style.display = 'block';
 heOpacityLabel.style.marginTop = '10px';
-heOpacityLabel.textContent = 'He_mass_group Opacity';
+heOpacityLabel.textContent = 'Helium %  Opacity';
 
 const heOpacitySlider = document.createElement('input');
 heOpacitySlider.type = 'range';
@@ -532,7 +532,7 @@ heOpacitySlider.addEventListener('input', () => {
 const heIntensityLabel = document.createElement('label');
 heIntensityLabel.style.display = 'block';
 heIntensityLabel.style.marginTop = '10px';
-heIntensityLabel.textContent = 'He_mass_group Intensity';
+heIntensityLabel.textContent = 'Helium %  Intensity';
 
 // Slider
 const heIntensitySlider = document.createElement('input');
@@ -564,15 +564,19 @@ ui.appendChild(heIntensitySlider);
 const groundOpacityLabel = document.createElement('label');
 groundOpacityLabel.style.display = 'block';
 groundOpacityLabel.style.marginTop = '10px';
-groundOpacityLabel.textContent = 'Ground PNG Opacity';
+groundOpacityLabel.textContent = 'Galaxy Map Opacity';
 
 const groundOpacitySlider = document.createElement('input');
 groundOpacitySlider.type = 'range';
 groundOpacitySlider.min = '0';
 groundOpacitySlider.max = '1';
 groundOpacitySlider.step = '0.01';
-groundOpacitySlider.value = '1.0';
+groundOpacitySlider.value = '0.3';
 
+// Apply initial opacity to match slider
+groundPlane.material.opacity = parseFloat(groundOpacitySlider.value);
+groundPlane.material.transparent = true; // ensure transparency is enabled
+    
 groundOpacitySlider.addEventListener('input', () => {
   groundPlane.material.opacity = parseFloat(groundOpacitySlider.value);
 });
@@ -588,7 +592,7 @@ groundToggle.addEventListener('change', () => {
 // Y‑position slider
 const groundYLabel = document.createElement('label');
 groundYLabel.style.display = 'block';
-groundYLabel.textContent = 'Ground Y Position';
+groundYLabel.textContent = 'Galaxy Map Y Position';
 
 const groundYSlider = document.createElement('input');
 groundYSlider.type = 'range';
