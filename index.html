@@ -561,13 +561,19 @@ heIntensitySlider.max = '3.0';   // allow boosting
 heIntensitySlider.step = '0.1';
 heIntensitySlider.value = '1.0'; // neutral multiplier
 
-// Update all meshes in the group
 heIntensitySlider.addEventListener('input', () => {
   const factor = parseFloat(heIntensitySlider.value);
+
   He_mass_group.traverse(obj => {
     if (obj.isMesh && obj.material) {
-      // Reset to white, then scale
-      obj.material.color.setScalar(factor);
+      const c = obj.material.color.clone();
+      const hsl = {};
+      c.getHSL(hsl);
+
+      // Scale saturation
+      hsl.s = Math.min(1, hsl.s * factor);
+
+      obj.material.color.setHSL(hsl.h, hsl.s, hsl.l);
       obj.material.needsUpdate = true;
     }
   });
@@ -576,8 +582,6 @@ heIntensitySlider.addEventListener('input', () => {
 // Add to your UI container
 ui.appendChild(heIntensityLabel);
 ui.appendChild(heIntensitySlider);
-
-
     
 // Opacity slider for ground plane
 const groundOpacityLabel = document.createElement('label');
