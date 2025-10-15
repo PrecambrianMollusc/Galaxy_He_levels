@@ -575,9 +575,10 @@ function adjustVertexColors(obj, factor) {
     color.getHSL(hsl);
 
     // Contrast-style saturation adjustment
-    hsl.s = THREE.MathUtils.clamp(0.5 + (hsl.s - 0.5) * factor, 0, 1);
+    hsl.s = 0.5 + (hsl.s - 0.5) * factor;
+    hsl.s = THREE.MathUtils.clamp(hsl.s, 0, 1);
 
-    // Leave lightness alone
+    // Leave lightness unchanged
     color.setHSL(hsl.h, hsl.s, hsl.l);
 
     colors.setXYZ(i, color.r, color.g, color.b);
@@ -585,14 +586,12 @@ function adjustVertexColors(obj, factor) {
 
   colors.needsUpdate = true;
 }
-
-
     
 // Label
 const heIntensityLabel = document.createElement('label');
 heIntensityLabel.style.display = 'block';
 heIntensityLabel.style.marginTop = '10px';
-heIntensityLabel.textContent = 'Helium % Intensity HL';
+heIntensityLabel.textContent = 'Helium % Intensity--';
 
 // Slider
 const heIntensitySlider = document.createElement('input');
