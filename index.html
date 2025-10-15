@@ -589,21 +589,15 @@ function adjustVertexColors(obj, factor) {
     let g = orig[i*3+1];
     let b = orig[i*3+2];
 
-    // Compute brightness to detect near-white
-    const brightness = (r + g + b) / 3;
-
+    // Boost only the dominant channel if it's red or blue
     if (r > g && r > b) {
       // Red-dominant → boost red
       r = THREE.MathUtils.clamp(r * factor, 0, 1);
     } else if (b > r && b > g) {
       // Blue-dominant → boost blue
       b = THREE.MathUtils.clamp(b * factor, 0, 1);
-    } else if (brightness > 0.9) {
-      // Near-white → leave unchanged
-      r = r;
-      g = g;
-      b = b;
     }
+    // Otherwise (white/neutral/greenish), leave unchanged
 
     colors.setXYZ(i, r, g, b);
   }
@@ -611,12 +605,13 @@ function adjustVertexColors(obj, factor) {
   colors.needsUpdate = true;
 }
 
+
     
 // Label
 const heIntensityLabel = document.createElement('label');
 heIntensityLabel.style.display = 'block';
 heIntensityLabel.style.marginTop = '10px';
-heIntensityLabel.textContent = 'Helium % Intensity';
+heIntensityLabel.textContent = 'Helium % Intensity -';
 
 // Slider
 const heIntensitySlider = document.createElement('input');
