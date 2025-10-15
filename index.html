@@ -633,6 +633,67 @@ ui.appendChild(groundToggle);
 ui.appendChild(groundYLabel);
 ui.appendChild(groundYSlider);
 
+// Midpoint slider
+const sliceMidLabel = document.createElement('label');
+sliceMidLabel.style.display = 'block';
+sliceMidLabel.style.marginTop = '10px';
+sliceMidLabel.textContent = 'Slice Midpoint (Y)';
+
+const sliceMidSlider = document.createElement('input');
+sliceMidSlider.type = 'range';
+sliceMidSlider.min = '-20000';
+sliceMidSlider.max = '20000';
+sliceMidSlider.step = '100';
+sliceMidSlider.value = '0';
+
+// Thickness slider
+const sliceThickLabel = document.createElement('label');
+sliceThickLabel.style.display = 'block';
+sliceThickLabel.style.marginTop = '10px';
+sliceThickLabel.textContent = 'Slice Thickness';
+
+const sliceThickSlider = document.createElement('input');
+sliceThickSlider.type = 'range';
+sliceThickSlider.min = '100';
+sliceThickSlider.max = '20000';
+sliceThickSlider.step = '100';
+sliceThickSlider.value = '2000';
+
+// Update function
+function updateSlice() {
+  const mid = parseFloat(sliceMidSlider.value);
+  const half = parseFloat(sliceThickSlider.value) / 2;
+
+  const minY = mid - half;
+  const maxY = mid + half;
+
+  He_mass_group.traverse(obj => {
+    if (obj.isMesh) {
+      obj.geometry.computeBoundingBox();
+      const box = obj.geometry.boundingBox;
+      const centerY = obj.position.y + (box.max.y + box.min.y) / 2;
+
+      obj.visible = (centerY >= minY && centerY <= maxY);
+    }
+  });
+}
+
+// Hook up events
+sliceMidSlider.addEventListener('input', updateSlice);
+sliceThickSlider.addEventListener('input', updateSlice);
+
+// Add to UI
+ui.appendChild(sliceMidLabel);
+ui.appendChild(sliceMidSlider);
+ui.appendChild(sliceThickLabel);
+ui.appendChild(sliceThickSlider);
+
+// Initial update
+updateSlice();
+
+
+    
+
 function addTitleAndCreditsUI(initialTitle = 'Galactic Helium levels', initialCredits = `Squadron Leader: Urania Minora
 CMDRs: 
 IGAU Squadron
