@@ -250,6 +250,15 @@ He_mass_group.name = "He_mass_group";
       }
     });
 
+He_mass_group.traverse(obj => {
+  if (obj.isMesh && obj.geometry && obj.geometry.attributes.color) {
+    obj.userData.originalColors = new Float32Array(obj.geometry.attributes.color.array);
+    console.log('Cached first color:', obj.userData.originalColors[0],
+                obj.userData.originalColors[1],
+                obj.userData.originalColors[2]);
+  }
+});
+
     
 // Add the group to the scene
 scene.add(He_mass_group);
@@ -583,6 +592,7 @@ function adjustVertexColors(obj, factor) {
 
     colors.setXYZ(i, color.r, color.g, color.b);
   }
+  console.log('Orig from cache:', orig[0], orig[1], orig[2]);
 
   colors.needsUpdate = true;
 }
