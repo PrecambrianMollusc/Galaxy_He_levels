@@ -49,13 +49,13 @@ loader.setDRACOLoader(dracoLoader);
   //const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 120000);
 
   // Lighting section — right after camera
-  const ambient = new THREE.AmbientLight(0xffffff, 0.8);
+  const ambient = new THREE.AmbientLight(0xffffff, 0.9);
   scene.add(ambient);
   
   const hemi = new THREE.HemisphereLight(0x88ccff, 0x222244, 0.8);
   scene.add(hemi);
    
-  const directional = new THREE.DirectionalLight(0xffffff, 0.7);
+  const directional = new THREE.DirectionalLight(0xffffff, 0.2);
   directional.position.set(1, 1, 1);
   scene.add(directional);
     
@@ -189,7 +189,7 @@ loader.setDRACOLoader(dracoLoader);
         // crude "is red" check: R much higher than G/B
         if (c.r > 0.6 && c.g < 0.3 && c.b < 0.3) {
           obj.material.emissive = c.clone(); // match base color
-          obj.material.emissiveIntensity = 0.2; // default, will be slider‑controlled
+          obj.material.emissiveIntensity = 0.6; // default, will be slider‑controlled
           obj.material.needsUpdate = true;
           console.log(`🔧 Applied emissive to ${obj.name}`);
         }
