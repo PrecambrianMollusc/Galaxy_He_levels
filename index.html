@@ -618,13 +618,13 @@ function adjustVertexColors(obj, factor) {
 const heIntensityLabel = document.createElement('label');
 heIntensityLabel.style.display = 'block';
 heIntensityLabel.style.marginTop = '10px';
-heIntensityLabel.textContent = 'Helium % Intensity -';
+heIntensityLabel.textContent = 'Helium % Intensity';
 
 // Slider
 const heIntensitySlider = document.createElement('input');
 heIntensitySlider.type = 'range';
 heIntensitySlider.min = '1.0';   // baseline = original colormap
-heIntensitySlider.max = '3.0';   // pull strongly toward pure red/blue
+heIntensitySlider.max = '2.0';   // pull strongly toward pure red/blue
 heIntensitySlider.step = '0.1';  // smooth increments
 heIntensitySlider.value = '1.0'; // start at original
 
