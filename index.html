@@ -551,7 +551,7 @@ heOpacitySlider.addEventListener('input', () => {
 const heIntensityLabel = document.createElement('label');
 heIntensityLabel.style.display = 'block';
 heIntensityLabel.style.marginTop = '10px';
-heIntensityLabel.textContent = 'Helium %  Intensity';
+heIntensityLabel.textContent = 'Helium % Intensity';
 
 // Slider
 const heIntensitySlider = document.createElement('input');
@@ -559,29 +559,42 @@ heIntensitySlider.type = 'range';
 heIntensitySlider.min = '0.1';   // allow dimming
 heIntensitySlider.max = '3.0';   // allow boosting
 heIntensitySlider.step = '0.1';
-heIntensitySlider.value = '1.0'; // neutral multiplier
+heIntensitySlider.value = '1.0'; // neutral
 
+// Update all vertex colors in the group
 heIntensitySlider.addEventListener('input', () => {
   const factor = parseFloat(heIntensitySlider.value);
 
   He_mass_group.traverse(obj => {
-    if (obj.isMesh && obj.material) {
-      const c = obj.material.color.clone();
-      const hsl = {};
-      c.getHSL(hsl);
+    if (obj.isMesh && obj.geometry && obj.geometry.attributes.color) {
+      const colors = obj.geometry.attributes.color;
+      const color = new THREE.Color();
 
-      // Scale saturation
-      hsl.s = Math.min(1, hsl.s * factor);
+      for (let i = 0; i < colors.count; i++) {
+        // Read original vertex color
+        color.fromBufferAttribute(colors, i);
 
-      obj.material.color.setHSL(hsl.h, hsl.s, hsl.l);
-      obj.material.needsUpdate = true;
+        // Convert to HSL
+        const hsl = {};
+        color.getHSL(hsl);
+
+        // Scale saturation
+        hsl.s = Math.min(1, hsl.s * factor);
+
+        // Write back adjusted color
+        color.setHSL(hsl.h, hsl.s, hsl.l);
+        colors.setXYZ(i, color.r, color.g, color.b);
+      }
+
+      colors.needsUpdate = true;
     }
   });
 });
 
-// Add to your UI container
+// Add to UI
 ui.appendChild(heIntensityLabel);
 ui.appendChild(heIntensitySlider);
+
     
 // Opacity slider for ground plane
 const groundOpacityLabel = document.createElement('label');
