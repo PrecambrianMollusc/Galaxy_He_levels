@@ -633,7 +633,7 @@ ui.appendChild(groundToggle);
 ui.appendChild(groundYLabel);
 ui.appendChild(groundYSlider);
 
-// Midpoint slider
+// --- Midpoint slider ---
 const sliceMidLabel = document.createElement('label');
 sliceMidLabel.style.display = 'block';
 sliceMidLabel.style.marginTop = '10px';
@@ -646,7 +646,7 @@ sliceMidSlider.max = '3000';
 sliceMidSlider.step = '320';
 sliceMidSlider.value = '0';
 
-// Thickness slider
+// --- Thickness slider ---
 const sliceThickLabel = document.createElement('label');
 sliceThickLabel.style.display = 'block';
 sliceThickLabel.style.marginTop = '10px';
@@ -659,13 +659,29 @@ sliceThickSlider.max = '10000';
 sliceThickSlider.step = '100';
 sliceThickSlider.value = '2480';
 
-// Readout for min/max
+// --- Readout for min/max ---
 const sliceReadout = document.createElement('div');
 sliceReadout.style.marginTop = '5px';
 sliceReadout.style.fontSize = '12px';
-sliceReadout.style.color = '#FFD700'; // gold highlight
+sliceReadout.style.color = '#FFD700';
 
-// Update function
+// --- Define clipping planes once ---
+const clipPlanes = [
+  new THREE.Plane(new THREE.Vector3(0, 1, 0), 0),   // minY plane
+  new THREE.Plane(new THREE.Vector3(0, -1, 0), 0)   // maxY plane
+];
+
+renderer.localClippingEnabled = true;
+
+// Attach clipping planes to all meshes in the group
+He_mass_group.traverse(obj => {
+  if (obj.isMesh) {
+    obj.material.clippingPlanes = clipPlanes;
+    obj.material.clipShadows = true;
+  }
+});
+
+// --- Update function ---
 function updateSlice() {
   const mid = parseFloat(sliceMidSlider.value);
   const half = parseFloat(sliceThickSlider.value) / 2;
@@ -676,16 +692,9 @@ function updateSlice() {
   // Update readout
   sliceReadout.textContent = `Slice range: ${minY} → ${maxY}`;
 
-  // Apply visibility
-  He_mass_group.traverse(obj => {
-    if (obj.isMesh) {
-      obj.geometry.computeBoundingBox();
-      const box = obj.geometry.boundingBox;
-      const centerY = obj.position.y + (box.max.y + box.min.y) / 2;
-
-      obj.visible = (centerY >= minY && centerY <= maxY);
-    }
-  });
+  // Update clipping planes
+  clipPlanes[0].constant = -minY; // plane equation offset
+  clipPlanes[1].constant = maxY;
 }
 
 // Hook up events
@@ -701,9 +710,6 @@ ui.appendChild(sliceReadout);
 
 // Initial update with presets
 updateSlice();
-
-
-
     
 
 function addTitleAndCreditsUI(initialTitle = 'Galactic Helium levels', initialCredits = `Squadron Leader: Urania Minora
