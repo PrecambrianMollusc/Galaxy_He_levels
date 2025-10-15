@@ -576,7 +576,6 @@ heIntensitySlider.max = '3.0';   // allow boosting
 heIntensitySlider.step = '0.1';
 heIntensitySlider.value = '1.0'; // neutral
 
-// Update all vertex colors in the group
 heIntensitySlider.addEventListener('input', () => {
   const factor = parseFloat(heIntensitySlider.value);
   const color = new THREE.Color();
@@ -606,6 +605,7 @@ heIntensitySlider.addEventListener('input', () => {
     }
   });
 });
+
 
 
 // Add to UI
