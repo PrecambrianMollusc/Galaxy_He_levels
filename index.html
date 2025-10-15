@@ -181,6 +181,22 @@ loader.setDRACOLoader(dracoLoader);
     }
   });
 
+    // fix red for the high He meshes 
+    console.log('Total meshes found:', meshList.length);
+    model.traverse(obj => {
+      if (obj.isMesh && obj.material && obj.material.color) {
+        const c = obj.material.color;
+        // crude "is red" check: R much higher than G/B
+        if (c.r > 0.6 && c.g < 0.3 && c.b < 0.3) {
+          obj.material.emissive = c.clone(); // match base color
+          obj.material.emissiveIntensity = 0.2; // default, will be slider‑controlled
+          obj.material.needsUpdate = true;
+          console.log(`🔧 Applied emissive to ${obj.name}`);
+        }
+      }
+    });
+
+    
     
     // 3. Grouping/naming
   model.traverse(child => {
@@ -290,18 +306,21 @@ scene.add(He_mass_group);
     //sphereMesh.material.needsUpdate = true;
    
   // add the bounding box 
-          const box = new THREE.Box3().setFromObject(model);
+          //const box = new THREE.Box3().setFromObject(model);
+          const box = new THREE.Box3().setFromObject(He_mass_group);
+
           const size = box.getSize(new THREE.Vector3());
           const center = box.getCenter(new THREE.Vector3());
           console.log('Bounding box size:', size);
           console.log('Bounding box center:', center);
       
-          camera.position.set(center.x-2000, center.y+ size.length()/2, center.z );
+          camera.position.set(center.x - size.length()/5, center.y + (size.length())/6, center.z - size.length()/5);
           controls.target.copy(center);
           controls.update();
-  
-          const boxHelper = new THREE.BoxHelper(model, 0x888888);
+            
+          const boxHelper = new THREE.BoxHelper(He_mass_group, 0x888888);
           scene.add(boxHelper);
+
           const min = box.min;
           const max = box.max;
           const offset = size.length() * 0.1;
@@ -317,7 +336,7 @@ scene.add(He_mass_group);
     
           scene.add(labelX, labelY, labelZ);
           
-          const arrowLength = size.length() * 0.05;
+          const arrowLength = size.length() * 0.2;
           const arrowX = new THREE.ArrowHelper(
             new THREE.Vector3(1, 0, 0), // direction: +X
             box.min,                    // origin: bounding box corner
