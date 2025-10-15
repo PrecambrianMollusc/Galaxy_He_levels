@@ -241,31 +241,30 @@ He_mass_group.name = "He_mass_group";
   arr.forEach(mesh => He_mass_group.add(mesh));
 });
 
+// After you’ve added all meshes into He_mass_group
 He_mass_group.traverse(obj => {
   if (obj.isMesh && obj.geometry && obj.geometry.attributes.color) {
     const colors = obj.geometry.attributes.color;
     const orig = new Float32Array(colors.count * 3);
 
+    // Copy normalized RGB values (already 0–1 in Three.js)
     for (let i = 0; i < colors.count; i++) {
-      orig[i*3]   = colors.getX(i) / 255;
-      orig[i*3+1] = colors.getY(i) / 255;
-      orig[i*3+2] = colors.getZ(i) / 255;
+      orig[i*3]   = colors.getX(i);
+      orig[i*3+1] = colors.getY(i);
+      orig[i*3+2] = colors.getZ(i);
     }
 
+    // Store once on the mesh
     obj.userData.originalColors = orig;
+
+    // Debug: log the first cached vertex color
+    if (orig.length >= 3) {
+      console.log('Cached normalized first color:',
+        orig[0].toFixed(3), orig[1].toFixed(3), orig[2].toFixed(3));
+    }
   }
 });
 
-
-
-He_mass_group.traverse(obj => {
-  if (obj.isMesh && obj.geometry && obj.geometry.attributes.color) {
-    obj.userData.originalColors = new Float32Array(obj.geometry.attributes.color.array);
-    console.log('Cached first color:', obj.userData.originalColors[0],
-                obj.userData.originalColors[1],
-                obj.userData.originalColors[2]);
-  }
-});
 
     
 // Add the group to the scene
@@ -609,7 +608,7 @@ function adjustVertexColors(obj, factor) {
 const heIntensityLabel = document.createElement('label');
 heIntensityLabel.style.display = 'block';
 heIntensityLabel.style.marginTop = '10px';
-heIntensityLabel.textContent = 'Helium % Intensity -';
+heIntensityLabel.textContent = 'Helium % Intensity';
 
 // Slider
 const heIntensitySlider = document.createElement('input');
