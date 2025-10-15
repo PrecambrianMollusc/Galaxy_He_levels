@@ -578,37 +578,33 @@ heOpacitySlider.addEventListener('input', () => {
   setGroupOpacity(He_mass_group, value);
 });
 
-// hE LEVEL COLOUR INTENSITY ADJSUTMENT     
 function adjustVertexColors(obj, factor) {
   const colors = obj.geometry.attributes.color;
   const orig = obj.userData.originalColors;
-  const color = new THREE.Color();
-  const hsl = {};
 
   for (let i = 0; i < colors.count; i++) {
-    color.setRGB(orig[i*3], orig[i*3+1], orig[i*3+2]);
+    let r = orig[i*3];
+    let g = orig[i*3+1];
+    let b = orig[i*3+2];
 
-    color.getHSL(hsl);
+    // Boost red channel more aggressively
+    r = THREE.MathUtils.clamp(r * factor, 0, 1);
+    g = THREE.MathUtils.clamp(g * (0.5 + 0.5/factor), 0, 1); // optionally dampen green
+    b = THREE.MathUtils.clamp(b * (0.5 + 0.5/factor), 0, 1); // optionally dampen blue
 
-    // Contrast-style saturation adjustment
-    hsl.s = 0.5 + (hsl.s - 0.5) * factor;
-    hsl.s = THREE.MathUtils.clamp(hsl.s, 0, 1);
-
-    // Leave lightness unchanged
-    color.setHSL(hsl.h, hsl.s, hsl.l);
-
-    colors.setXYZ(i, color.r, color.g, color.b);
+    colors.setXYZ(i, r, g, b);
   }
-  console.log('Orig from cache:', orig[0], orig[1], orig[2]);
 
   colors.needsUpdate = true;
 }
+
+
     
 // Label
 const heIntensityLabel = document.createElement('label');
 heIntensityLabel.style.display = 'block';
 heIntensityLabel.style.marginTop = '10px';
-heIntensityLabel.textContent = 'Helium % Intensity';
+heIntensityLabel.textContent = 'Helium % Intensity -';
 
 // Slider
 const heIntensitySlider = document.createElement('input');
