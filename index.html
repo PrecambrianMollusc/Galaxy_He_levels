@@ -641,9 +641,9 @@ sliceMidLabel.textContent = 'Slice Midpoint (Y)';
 
 const sliceMidSlider = document.createElement('input');
 sliceMidSlider.type = 'range';
-sliceMidSlider.min = '-20000';
-sliceMidSlider.max = '20000';
-sliceMidSlider.step = '100';
+sliceMidSlider.min = '-3000';
+sliceMidSlider.max = '3000';
+sliceMidSlider.step = '320';
 sliceMidSlider.value = '0';
 
 // Thickness slider
@@ -654,10 +654,16 @@ sliceThickLabel.textContent = 'Slice Thickness';
 
 const sliceThickSlider = document.createElement('input');
 sliceThickSlider.type = 'range';
-sliceThickSlider.min = '100';
-sliceThickSlider.max = '20000';
+sliceThickSlider.min = '10';
+sliceThickSlider.max = '10000';
 sliceThickSlider.step = '100';
-sliceThickSlider.value = '2000';
+sliceThickSlider.value = '2480';
+
+// Readout for min/max
+const sliceReadout = document.createElement('div');
+sliceReadout.style.marginTop = '5px';
+sliceReadout.style.fontSize = '12px';
+sliceReadout.style.color = '#FFD700'; // gold highlight
 
 // Update function
 function updateSlice() {
@@ -667,6 +673,10 @@ function updateSlice() {
   const minY = mid - half;
   const maxY = mid + half;
 
+  // Update readout
+  sliceReadout.textContent = `Slice range: ${minY} → ${maxY}`;
+
+  // Apply visibility
   He_mass_group.traverse(obj => {
     if (obj.isMesh) {
       obj.geometry.computeBoundingBox();
@@ -687,9 +697,11 @@ ui.appendChild(sliceMidLabel);
 ui.appendChild(sliceMidSlider);
 ui.appendChild(sliceThickLabel);
 ui.appendChild(sliceThickSlider);
+ui.appendChild(sliceReadout);
 
-// Initial update
+// Initial update with presets
 updateSlice();
+
 
 
     
