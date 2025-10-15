@@ -241,6 +241,16 @@ He_mass_group.name = "He_mass_group";
   arr.forEach(mesh => He_mass_group.add(mesh));
 });
 
+    // Cache original colors once
+    He_mass_group.traverse(obj => {
+      if (obj.isMesh && obj.geometry && obj.geometry.attributes.color) {
+        const colors = obj.geometry.attributes.color;
+        // Store a Float32Array copy on the geometry
+        obj.userData.originalColors = new Float32Array(colors.array);
+      }
+    });
+
+    
 // Add the group to the scene
 scene.add(He_mass_group);
     
@@ -263,14 +273,7 @@ scene.add(He_mass_group);
       // add more groups here if needed
     };
     
-    // Cache original colors once
-    He_mass_group.traverse(obj => {
-      if (obj.isMesh && obj.geometry && obj.geometry.attributes.color) {
-        const colors = obj.geometry.attributes.color;
-        // Store a Float32Array copy on the geometry
-        obj.userData.originalColors = new Float32Array(colors.array);
-      }
-    });
+
     
     // set up the sphere for the Hen nebula 
     sphereMesh.material.opacity = 0.3;
